@@ -1,0 +1,41 @@
+---
+- name: Get latest docker compose version
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/docker/compose/releases/latest
+    method: GET
+    return_content: true
+    status_code: 200
+    body_format: json
+  register: _docker_compose_latest
+  when: docker_compose_version == "latest"
+
+- name: Use latest docker compose version
+  ansible.builtin.set_fact:
+    _docker_compose_version: "{{ _docker_compose_latest.json.tag_name | regex_replace('^v?(.*)$', '\\1') }}"
+  when: docker_compose_version == "latest"
+
+- name: Use static docker compose version
+  ansible.builtin.set_fact:
+    _docker_compose_version: "{{ docker_compose_version }}"
+  when: docker_compose_version != "latest"
+
+- name: Create docker plugin directory
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
+- name: Install docker compose executable
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/v{{ _docker_compose_version }}/docker-compose-linux-{{ docker_compose_arch_map[ansible_architecture] }}
+    dest: /usr/local/lib/docker/cli-plugins/docker-compose
+    checksum: >-
+      {{ 'sha256:' +
+      (lookup('url', 'https://github.com/docker/compose/releases/download/v' + _docker_compose_version
+      + '/docker-compose-linux-' + docker_compose_arch_map[ansible_architecture] + '.sha256').split(' ')[0]
+      if docker_compose_checksum == '' else docker_compose_checksum) }}
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx

@@ -50,3 +50,7 @@
     masked: no
     enabled: yes
     state: started
+
+- name: Install docker compose
+  ansible.builtin.import_tasks: docker-compose.yml
+  when: docker_compose_install | bool
