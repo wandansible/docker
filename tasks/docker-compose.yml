@@ -29,7 +29,8 @@
 
 - name: Install docker compose executable
   ansible.builtin.get_url:
-    url: https://github.com/docker/compose/releases/download/v{{ _docker_compose_version }}/docker-compose-linux-{{ docker_compose_arch_map[ansible_architecture] }}
+    url: "https://github.com/docker/compose/releases/download/\
+      v{{ _docker_compose_version }}/docker-compose-linux-{{ docker_compose_arch_map[ansible_architecture] }}"
     dest: /usr/local/lib/docker/cli-plugins/docker-compose
     checksum: >-
       {{ 'sha256:' +

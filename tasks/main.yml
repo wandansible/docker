@@ -1,24 +1,41 @@
 ---
+- name: Remove old docker apt repository entry
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    filename: docker
+    update_cache: no
+    state: absent
+
+- name: Remove docker apt signing key from default apt keyring
+  ansible.builtin.apt_key:
+    id: "{{ docker_apt_key_fingerprint }}"
+    keyring: /etc/apt/trusted.gpg
+    state: absent
+
 - name: Add docker apt signing key
-  apt_key:
+  ansible.builtin.apt_key:
     id: "{{ docker_apt_key_fingerprint }}"
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+    keyring: /usr/share/keyrings/docker.gpg
     state: present
 
 - name: Add docker apt repository
-  apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release}} stable
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch=amd64 signed-by=/usr/share/keyrings/docker.gpg]
+      https://download.docker.com/linux/{{ ansible_distribution | lower }}
+      {{ ansible_distribution_release }} stable
     filename: docker
     update_cache: yes
     state: present
 
 - name: Install docker-ce
-  apt:
+  ansible.builtin.apt:
     name: docker-ce
     state: present
 
 - name: Add docker service overrides directory
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/docker.service.d
     state: directory
     owner: root
@@ -26,7 +43,7 @@
     mode: u=rwx,g=rx,o=rx
 
 - name: Add docker service overrides
-  template:
+  ansible.builtin.template:
     src: service-overrides.conf
     dest: /etc/systemd/system/docker.service.d/service-overrides.conf
     owner: root
@@ -35,7 +52,7 @@
   notify: systemd daemon-reload
 
 - name: Add docker daemon configuration
-  template:
+  ansible.builtin.template:
     src: daemon.json
     dest: /etc/docker/daemon.json
     owner: root
@@ -44,7 +61,7 @@
   notify: restart docker
 
 - name: Start and enable docker
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     daemon_reload: yes
     masked: no
