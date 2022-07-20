@@ -34,6 +34,12 @@
     name: docker-ce
     state: present
 
+- name: Install docker-compose-plugin
+  ansible.builtin.apt:
+    name: docker-compose-plugin
+    state: present
+  when: docker_compose_install | bool
+
 - name: Add docker service overrides directory
   ansible.builtin.file:
     path: /etc/systemd/system/docker.service.d
@@ -66,7 +72,3 @@
     masked: no
     enabled: yes
     state: started
-
-- name: Install docker compose
-  ansible.builtin.import_tasks: docker-compose.yml
-  when: docker_compose_install | bool
