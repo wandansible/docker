@@ -1,0 +1,19 @@
+---
+argument_specs:
+  main:
+    options:
+      docker_apt_key_fingerprint:
+        description: Fingerprint for docker apt signing key
+        type: str
+
+      docker_daemon:
+        description: |
+          Configuration for the docker daemon
+          See https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
+          for configuration options
+        type: dict
+
+      docker_compose_install:
+        description: Whether or not to install docker compose
+        type: bool
+        default: false
