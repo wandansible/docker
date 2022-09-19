@@ -1,6 +1,10 @@
 ---
 argument_specs:
   main:
+    short_description: Install and configure docker
+    description: |
+      Install docker and configure the docker daemon.
+      Optionally, install docker-compose.
     options:
       docker_apt_key_fingerprint:
         description: Fingerprint for docker apt signing key
