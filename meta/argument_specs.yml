@@ -12,7 +12,7 @@ argument_specs:
 
       docker_daemon:
         description: |
-          Configuration for the docker daemon
+          Configuration for the docker daemon.
           See https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
           for configuration options
         type: dict
