@@ -75,6 +75,14 @@
     group: root
     mode: u=rw,g=r,o=r
 
+- name: Create docker configuration directory
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
 - name: Add docker daemon configuration
   ansible.builtin.template:
     src: daemon.json
