@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Lint ansible
-        uses: wanduow/action-ansible-lint@v1
+        uses: wandansible/action-ansible-lint@v1
 
   jinja2-lint:
     name: Jinja2 Lint
@@ -29,4 +29,4 @@ jobs:
         with:
           fetch-depth: 0
       - name: Lint jinja2 files
-        uses: wanduow/action-j2lint@v1
+        uses: wandansible/action-j2lint@v1
