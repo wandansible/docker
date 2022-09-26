@@ -36,11 +36,12 @@ Installation
 
 This role can either be installed manually with the ansible-galaxy CLI tool:
 
-    ansible-galaxy install git+https://github.com/wandansible/docker
+    ansible-galaxy install git+https://github.com/wandansible/docker,main,wandansible.docker
      
 Or, by adding the following to `requirements.yml`:
 
-    - src: https://github.com/wandansible/docker
+    - name: wandansible.docker
+      src: https://github.com/wandansible/docker
 
 Roles listed in `requirements.yml` can be installed with the following ansible-galaxy command:
 
