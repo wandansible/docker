@@ -1,4 +1,15 @@
 ---
+- name: Get dpkg host architecture
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  changed_when: false
+  register: get_dpkg_host_architecture
+
+- name: Set dpkg host architecture fact
+  ansible.builtin.set_fact:
+    dpkg_host_architecture: "{{ get_dpkg_host_architecture.stdout }}"
+  when: get_dpkg_host_architecture.rc == 0
+
 - name: Remove old docker apt repository entries
   ansible.builtin.apt_repository:
     repo: >-
@@ -6,11 +17,11 @@
       https://download.docker.com/linux/{{ ansible_distribution | lower }}
       {{ ansible_distribution_release }} stable
     filename: docker
-    update_cache: no
+    update_cache: false
     state: absent
   loop:
-    - arch=amd64
-    - arch=amd64 signed-by=/usr/share/keyrings/docker.gpg
+    - "arch={{ dpkg_host_architecture }}"
+    - "arch={{ dpkg_host_architecture }} signed-by=/usr/share/keyrings/docker.gpg"
 
 - name: Remove docker apt signing key from /usr/share/keyrings
   ansible.builtin.file:
@@ -41,11 +52,11 @@
 - name: Add docker apt repository
   ansible.builtin.apt_repository:
     repo: >-
-      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg]
+      deb [arch={{ dpkg_host_architecture }} signed-by=/etc/apt/keyrings/docker.gpg]
       https://download.docker.com/linux/{{ ansible_distribution | lower }}
       {{ ansible_distribution_release }} stable
     filename: docker
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Install docker-ce
@@ -95,7 +106,7 @@
 - name: Start and enable docker
   ansible.builtin.systemd:
     name: docker
-    daemon_reload: yes
-    masked: no
-    enabled: yes
+    daemon_reload: true
+    masked: false
+    enabled: true
     state: started
