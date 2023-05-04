@@ -6,7 +6,7 @@
       https://download.docker.com/linux/{{ ansible_distribution | lower }}
       {{ ansible_distribution_release }} stable
     filename: docker
-    update_cache: no
+    update_cache: false
     state: absent
   loop:
     - arch=amd64
@@ -45,7 +45,7 @@
       https://download.docker.com/linux/{{ ansible_distribution | lower }}
       {{ ansible_distribution_release }} stable
     filename: docker
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Install docker-ce
@@ -95,7 +95,7 @@
 - name: Start and enable docker
   ansible.builtin.systemd:
     name: docker
-    daemon_reload: yes
-    masked: no
-    enabled: yes
+    daemon_reload: true
+    masked: false
+    enabled: true
     state: started
